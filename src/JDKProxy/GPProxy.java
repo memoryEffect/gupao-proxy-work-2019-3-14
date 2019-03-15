@@ -14,15 +14,16 @@ import java.lang.reflect.Method;
  */
 public class GPProxy {
     public static final  String ln  ="\r\n";
-    public static  Object newProxyInstance(GPClassLoader classLoader,Class[] intefaces,GPInvocationHandler h){
+    public static  Object newProxyInstance(GPClassLoader classLoader,Class<?>[] interfaces,GPInvocationHandler h){
+        try {
             //1.动态生成源代码.java文件
-            String src = generateSrc(intefaces);
+            String src = generateSrc(interfaces);
 
             //2.java文件输出磁盘
         String filePath =GPProxy.class.getResource("").getPath();
         System.out.println(filePath);
-        File  file = new File("E://$Proxy0.java");
-        try {
+        File  file = new File(filePath+"$Proxy0.java");
+
             FileWriter fw = new FileWriter(file);
             fw.write(src);
             fw.flush();
@@ -42,7 +43,7 @@ public class GPProxy {
             Constructor c= proxyClass.getConstructor(GPInvocationHandler.class);
             file.delete();
             //5.返回字节码重组以后新的代理对象
-            return c.newInstance();
+            return c.newInstance(h);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -51,9 +52,9 @@ public class GPProxy {
 
     private static String generateSrc(Class<?>[] interfaces){
         StringBuffer sb = new StringBuffer();
-        sb.append("package JDKProxy;"+ln);
-        sb.append("import staticProxy.IOrderService;" + ln);
-        sb.append("import java.lang.reflect.Method;" + ln);
+        sb.append("package JDKProxy; "+ln);
+        sb.append("import staticProxy.IOrderService; " + ln);
+        sb.append("import java.lang.reflect.Method; " + ln);
         System.out.println(interfaces[0].getName());
             sb.append("public class $Proxy0 implements " + interfaces[0].getName() + "{" + ln);
             sb.append("GPInvocationHandler h;" + ln);
@@ -61,7 +62,8 @@ public class GPProxy {
             sb.append("this.h=h;");
             sb.append("}" + ln);
             for(Method m :interfaces[0].getMethods()){
-                sb.append("public" + m.getReturnType().getName()+" "+m.getName() +"(){" + ln );
+                System.out.println(m.getReturnType().getName());
+                sb.append("public " + m.getReturnType().getName()+ " " + m.getName() + "(){" + ln );
                 sb.append("try{" + ln);
                 sb.append("Method m = " + interfaces[0].getName() + ".class.getMethod(\"" + m.getName() + "\",new Class[]{});" + ln);
                 sb.append("this.h.invoke(this,m,null);" + ln);

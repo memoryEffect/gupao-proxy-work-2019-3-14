@@ -1,8 +1,6 @@
 package JDKProxy;
 
-import staticProxy.IOrderService;
-import staticProxy.Order;
-import staticProxy.OrderService;
+import staticProxy.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,17 +24,23 @@ public class GPOrderTest {
             e.printStackTrace();
         }*/
 
-        Order order = new Order();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-        Date date = null;
+//        Order order = new Order();
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+//        Date date = null;
+//        try {
+//            date = sdf.parse("2019/3/14");
+//            order.setCreateTime(date.getTime());
+//            IOrderService iOrderService= (IOrderService) new GPOrderServiceDynamicProxy().getInstance(new OrderService());
+//            iOrderService.createOrder(order);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
         try {
-            date = sdf.parse("2019/3/14");
-            order.setCreateTime(date.getTime());
-            IOrderService iOrderService= (IOrderService) new GPOrderServiceDynamicProxy().getInstance(new OrderService());
-            //iOrderService.createOrder(order);
-        } catch (ParseException e) {
+            Person obj = (Person)new GPMeipo().getInstance(new Customer());
+            System.out.println(obj.getClass());
+            obj.findLove();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }
